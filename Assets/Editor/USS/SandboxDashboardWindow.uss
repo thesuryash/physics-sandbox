@@ -1,0 +1,53 @@
+.nav-row {
+    padding: 6px 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255,255,255,0.06);
+}
+
+.nav-row-label {
+    font-size: 13px;
+}
+
+.section-card {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(255,255,255,0.08);
+    background-color: rgba(255,255,255,0.03);
+}
+
+.section-title {
+    font-size: 14px;
+    unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.subsection-block {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top-width: 1px;
+    border-top-color: rgba(255,255,255,0.06);
+}
+
+.subsection-title {
+    font-size: 12px;
+    unity-font-style: bold;
+    margin-bottom: 6px;
+    opacity: 0.9;
+}
+
+.button-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tool-button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    min-width: 220px;
+}
+
+.placeholder {
+    opacity: 0.5;
+}

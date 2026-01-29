@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:VisualElement style="padding:12px;">
+    <ui:Label text="Charge Flow Preview" style="unity-font-style:bold; font-size:14px;" />
+  </ui:VisualElement>
+</ui:UXML>
