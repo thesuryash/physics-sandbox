@@ -40,7 +40,7 @@ public class Mass : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col != null)
         {
-            // We create a unique instance so we don't change other objects
+            // We create a unique instance so we don't change other obects
             PhysicMaterial mat = new PhysicMaterial();
             mat.bounciness = definition.restitution;
             mat.staticFriction = definition.staticFriction;
