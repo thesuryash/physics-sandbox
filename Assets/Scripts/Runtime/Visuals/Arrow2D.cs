@@ -11,8 +11,12 @@ public class Arrow2D : MonoBehaviour
     public float headWidth = 0.4f;
 
     [Header("Visuals")]
-    public Color color = Color.red;
+    public Color color = UnityEngine.Color.red; // Explicitly named to avoid conflicts
     [SerializeField] private Material _baseMaterial;
+
+    [Header("Stabilization")]
+    [Range(0f, 1f)] public float stabilization = 0.5f;
+    [Tooltip("Smoothing factor for the arrow length and direction.")]
 
     [Header("External Reference")]
     public float scaleFactor = 0.5f;
@@ -25,11 +29,12 @@ public class Arrow2D : MonoBehaviour
     private Mesh _mesh;
     private Rigidbody _rb;
 
-    // --- Life Cycle ---
+    // Internal smoothing states
+    private float _smoothedLength;
+    private Vector3 _smoothedUp;
 
     private void Reset()
     {
-        // Safe setup for new components
         length = 2f;
         shaftWidth = 0.1f;
         headSize = 0.3f;
@@ -46,7 +51,12 @@ public class Arrow2D : MonoBehaviour
         if (gameObject.activeInHierarchy) BuildArrow();
     }
 
-    private void Start() => BuildArrow();
+    private void Start()
+    {
+        _smoothedLength = length;
+        _smoothedUp = transform.up;
+        BuildArrow();
+    }
 
     private void Update()
     {
@@ -55,33 +65,54 @@ public class Arrow2D : MonoBehaviour
         if (_rb == null) _rb = GetComponentInParent<Rigidbody>();
         if (_rb == null) return;
 
-        float magnitude = 0f;
+        float targetMag = 0f;
+        Vector3 targetDir = transform.up;
 
         switch (source)
         {
             case ForceSource.Velocity:
-                magnitude = _rb.velocity.magnitude;
-                if (magnitude > 0.01f) transform.up = _rb.velocity.normalized;
+                targetMag = _rb.velocity.magnitude;
+                if (targetMag > 0.01f) targetDir = _rb.velocity.normalized;
                 break;
 
             case ForceSource.Gravity:
-                magnitude = _rb.mass * Physics.gravity.magnitude;
-                transform.up = Physics.gravity.normalized;
+                targetMag = _rb.mass * Physics.gravity.magnitude;
+                targetDir = Physics.gravity.normalized;
                 break;
-
-                // Note: Normal/Friction are calculated by the FBD script and pushed via SetData
         }
 
-        length = magnitude * scaleFactor;
-        BuildArrow();
+        ApplyStabilizedData(targetMag * scaleFactor, targetDir);
     }
-
-    // --- Core Logic ---
 
     public void SetData(float magnitude, Color newColor)
     {
-        length = magnitude;
         color = newColor;
+
+        if (Application.isPlaying)
+        {
+            ApplyStabilizedData(magnitude, transform.up);
+        }
+        else
+        {
+            length = magnitude;
+            BuildArrow();
+        }
+    }
+
+    private void ApplyStabilizedData(float targetLength, Vector3 targetUp)
+    {
+        // Low-pass filter for stabilization
+        float lerpFactor = 1f - stabilization;
+
+        _smoothedLength = Mathf.Lerp(_smoothedLength, targetLength, lerpFactor);
+        length = _smoothedLength;
+
+        if (targetUp.sqrMagnitude > 0.001f)
+        {
+            _smoothedUp = Vector3.Slerp(_smoothedUp, targetUp, lerpFactor);
+            transform.up = _smoothedUp;
+        }
+
         BuildArrow();
     }
 
@@ -98,13 +129,11 @@ public class Arrow2D : MonoBehaviour
             _meshFilter.sharedMesh = _mesh;
         }
 
-        // Apply base material if assigned
         if (_baseMaterial != null && _meshRenderer.sharedMaterial != _baseMaterial)
         {
             _meshRenderer.sharedMaterial = _baseMaterial;
         }
 
-        // Color update via PropertyBlock (No Material Leaking)
         MaterialPropertyBlock props = new MaterialPropertyBlock();
         props.SetColor("_Color", color);
         props.SetColor("_BaseColor", color);
