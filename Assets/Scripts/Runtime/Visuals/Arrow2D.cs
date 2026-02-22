@@ -1,9 +1,25 @@
 using UnityEngine;
+using TMPro;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class Arrow2D : MonoBehaviour
 {
+    [Header("Zoom Overlay (Constant Screen Size)")]
+    public bool maintainScreenSize = true;
+    [Range(0.001f, 0.1f)] public float screenSizeMultiplier = 0.05f;
+
+    [Header("Overlay Settings")]
+    public bool drawOverObjects = true;
+    private bool _prevDrawOverObjects = false; // Tracks changes for real-time toggling
+
+    [Header("Label")]
+    public string labelText = "";
+    public float labelSize = 2f;
+    [Tooltip("How far past the arrowhead the text should float.")]
+    public float labelOffset = 0.5f;
+    public Color labelColor = Color.white;
+
     [Header("Dimensions")]
     public float length = 2f;
     public float shaftWidth = 0.1f;
@@ -11,12 +27,11 @@ public class Arrow2D : MonoBehaviour
     public float headWidth = 0.4f;
 
     [Header("Visuals")]
-    public Color color = UnityEngine.Color.red; // Explicitly named to avoid conflicts
+    public Color color = UnityEngine.Color.red;
     [SerializeField] private Material _baseMaterial;
 
     [Header("Stabilization")]
     [Range(0f, 1f)] public float stabilization = 0.5f;
-    [Tooltip("Smoothing factor for the arrow length and direction.")]
 
     [Header("External Reference")]
     public float scaleFactor = 0.5f;
@@ -28,8 +43,11 @@ public class Arrow2D : MonoBehaviour
     private MeshRenderer _meshRenderer;
     private Mesh _mesh;
     private Rigidbody _rb;
+    private Camera _mainCamera;
 
-    // Internal smoothing states
+    private TextMeshPro _textMesh;
+    private bool _labelNeedsUpdate = true;
+
     private float _smoothedLength;
     private Vector3 _smoothedUp;
 
@@ -48,14 +66,40 @@ public class Arrow2D : MonoBehaviour
 
     private void OnValidate()
     {
-        if (gameObject.activeInHierarchy) BuildArrow();
+        if (gameObject.activeInHierarchy)
+        {
+            BuildArrow();
+            _labelNeedsUpdate = true;
+        }
     }
+
+    //private void Start()
+    //{
+    //    _smoothedLength = length;
+    //    _smoothedUp = transform.up;
+    //    _mainCamera = Camera.main;
+    //    BuildArrow();
+    //    _labelNeedsUpdate = true;
+
+    //    // Force an overlay update on frame 1
+    //    _prevDrawOverObjects = !drawOverObjects;
+    //}
 
     private void Start()
     {
+        // --- THE FIX: Only grab transform.up if the FBD script hasn't already set our direction! ---
+        if (_smoothedUp == Vector3.zero)
+        {
+            _smoothedUp = transform.up;
+        }
+
         _smoothedLength = length;
-        _smoothedUp = transform.up;
+        _mainCamera = Camera.main;
         BuildArrow();
+        _labelNeedsUpdate = true;
+
+        // Force an overlay update on frame 1
+        _prevDrawOverObjects = !drawOverObjects;
     }
 
     private void Update()
@@ -84,24 +128,99 @@ public class Arrow2D : MonoBehaviour
         ApplyStabilizedData(targetMag * scaleFactor, targetDir);
     }
 
-    public void SetData(float magnitude, Color newColor)
+    private void LateUpdate()
     {
-        color = newColor;
+        if (_mainCamera == null) _mainCamera = Camera.main;
 
-        if (Application.isPlaying)
+        // --- Toggle Material State (X-Ray Mode) ---
+        if (drawOverObjects != _prevDrawOverObjects)
         {
-            ApplyStabilizedData(magnitude, transform.up);
+            _prevDrawOverObjects = drawOverObjects;
+            UpdateOverlayState();
+        }
+
+        if (_labelNeedsUpdate)
+        {
+            SetupLabelProps();
+            _labelNeedsUpdate = false;
+        }
+
+        // --- Zoom Math ---
+        if (maintainScreenSize && _mainCamera != null)
+        {
+            float zoomFactor = 1f;
+
+            if (_mainCamera.orthographic)
+            {
+                zoomFactor = _mainCamera.orthographicSize * screenSizeMultiplier;
+            }
+            else
+            {
+                Plane cameraPlane = new Plane(_mainCamera.transform.forward, _mainCamera.transform.position);
+                float distance = cameraPlane.GetDistanceToPoint(transform.position);
+
+                float fovMultiplier = Mathf.Tan(_mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * 2f;
+                zoomFactor = distance * fovMultiplier * screenSizeMultiplier;
+            }
+
+            transform.localScale = new Vector3(zoomFactor, zoomFactor, zoomFactor);
         }
         else
         {
+            transform.localScale = Vector3.one;
+        }
+
+        // --- Dynamic Billboarding for the Arrow Mesh ---
+        if (_mainCamera != null && _smoothedUp.sqrMagnitude > 0.001f)
+        {
+            Vector3 camForward = _mainCamera.transform.forward;
+
+            // We use Vector3.Cross to prevent Unity math errors if you look perfectly straight down the arrow
+            if (Vector3.Cross(camForward, _smoothedUp).sqrMagnitude > 0.001f)
+            {
+                // Lock the Y axis to the force direction (_smoothedUp), and pivot the Z axis to face the camera
+                transform.rotation = Quaternion.LookRotation(-camForward, _smoothedUp);
+            }
+            else
+            {
+                transform.up = _smoothedUp; // Fallback
+            }
+        }
+
+        // --- Dynamic Label Positioning & Billboarding ---
+        if (_textMesh != null && _textMesh.gameObject.activeSelf)
+        {
+            if (_mainCamera != null)
+            {
+                _textMesh.transform.rotation = _mainCamera.transform.rotation;
+            }
+
+            float sign = length < 0 ? -1f : 1f;
+            _textMesh.transform.localPosition = new Vector3(0, length + (labelOffset * sign), 0);
+        }
+    }
+
+    public void UpdateData(float magnitude, Vector3 direction, Color newColor, bool forceSnap = false)
+    {
+        color = newColor;
+
+        // If playing AND we aren't forcing a snap, smooth it out
+        if (Application.isPlaying && !forceSnap)
+        {
+            ApplyStabilizedData(magnitude, direction);
+        }
+        else
+        {
+            // Instantly snap the visuals AND the internal smoothing states!
             length = magnitude;
+            _smoothedLength = magnitude;
+            _smoothedUp = direction.normalized;
             BuildArrow();
         }
     }
 
     private void ApplyStabilizedData(float targetLength, Vector3 targetUp)
     {
-        // Low-pass filter for stabilization
         float lerpFactor = 1f - stabilization;
 
         _smoothedLength = Mathf.Lerp(_smoothedLength, targetLength, lerpFactor);
@@ -109,8 +228,7 @@ public class Arrow2D : MonoBehaviour
 
         if (targetUp.sqrMagnitude > 0.001f)
         {
-            _smoothedUp = Vector3.Slerp(_smoothedUp, targetUp, lerpFactor);
-            transform.up = _smoothedUp;
+            _smoothedUp = Vector3.Slerp(_smoothedUp, targetUp, lerpFactor).normalized;
         }
 
         BuildArrow();
@@ -120,7 +238,6 @@ public class Arrow2D : MonoBehaviour
     {
         if (_meshFilter == null) _meshFilter = GetComponent<MeshFilter>();
         if (_meshRenderer == null) _meshRenderer = GetComponent<MeshRenderer>();
-
         if (_meshFilter == null || _meshRenderer == null) return;
 
         if (_mesh == null)
@@ -129,9 +246,16 @@ public class Arrow2D : MonoBehaviour
             _meshFilter.sharedMesh = _mesh;
         }
 
-        if (_baseMaterial != null && _meshRenderer.sharedMaterial != _baseMaterial)
+        if (_baseMaterial != null)
         {
-            _meshRenderer.sharedMaterial = _baseMaterial;
+            // Instead of forcing the overlay, we create a safe instance and let UpdateOverlayState manage it
+            if (_meshRenderer.sharedMaterial == null || _meshRenderer.sharedMaterial == _baseMaterial)
+            {
+                Material matInstance = new Material(_baseMaterial);
+                matInstance.name = _baseMaterial.name + " (Instance)";
+                _meshRenderer.sharedMaterial = matInstance;
+            }
+            UpdateOverlayState();
         }
 
         MaterialPropertyBlock props = new MaterialPropertyBlock();
@@ -140,6 +264,32 @@ public class Arrow2D : MonoBehaviour
         _meshRenderer.SetPropertyBlock(props);
 
         GenerateMesh();
+    }
+
+    // --- NEW: Safely handles swapping back and forth between Normal and Overlay (X-Ray) modes ---
+    private void UpdateOverlayState()
+    {
+        if (_meshRenderer != null && _meshRenderer.sharedMaterial != null && _baseMaterial != null)
+        {
+            Material mat = _meshRenderer.sharedMaterial;
+            if (drawOverObjects)
+            {
+                mat.renderQueue = 4000;
+                mat.SetInt("_ZTest", 8); // Always draw
+            }
+            else
+            {
+                mat.renderQueue = _baseMaterial.renderQueue;
+                mat.SetInt("_ZTest", 4); // LEqual (Standard depth test)
+            }
+        }
+
+        // Also update the label's depth settings so the text doesn't clip when the arrow is X-Ray!
+        if (_textMesh != null && _textMesh.fontMaterial != null)
+        {
+            if (drawOverObjects) _textMesh.fontMaterial.SetInt("unity_GUIZTestMode", 8);
+            else _textMesh.fontMaterial.SetInt("unity_GUIZTestMode", 4);
+        }
     }
 
     private void GenerateMesh()
@@ -168,12 +318,54 @@ public class Arrow2D : MonoBehaviour
         vertices[6] = new Vector3(0, effectiveLength * sign, 0);
 
         int[] triangles = !isNegative ?
-            new int[] { 0, 2, 1, 1, 2, 3, 4, 6, 5 } :
-            new int[] { 0, 1, 2, 1, 3, 2, 4, 5, 6 };
+            new int[] {
+                0, 2, 1,   1, 2, 3,   4, 6, 5,
+                1, 2, 0,   3, 2, 1,   5, 6, 4
+            } :
+            new int[] {
+                0, 1, 2,   1, 3, 2,   4, 5, 6,
+                2, 1, 0,   2, 3, 1,   6, 5, 4
+            };
 
         _mesh.vertices = vertices;
         _mesh.triangles = triangles;
         _mesh.RecalculateNormals();
         _mesh.RecalculateBounds();
+    }
+
+    private void SetupLabelProps()
+    {
+        if (string.IsNullOrEmpty(labelText))
+        {
+            if (_textMesh != null) _textMesh.gameObject.SetActive(false);
+            return;
+        }
+
+        if (_textMesh == null)
+        {
+            Transform child = transform.Find("ArrowLabel");
+            if (child != null)
+            {
+                _textMesh = child.GetComponent<TextMeshPro>();
+            }
+            else
+            {
+                GameObject labelObj = new GameObject("ArrowLabel");
+                labelObj.transform.SetParent(this.transform);
+
+                _textMesh = labelObj.AddComponent<TextMeshPro>();
+                _textMesh.alignment = TextAlignmentOptions.Center;
+                _textMesh.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+        }
+
+        _textMesh.gameObject.SetActive(true);
+        _textMesh.text = labelText;
+        _textMesh.color = labelColor;
+        _textMesh.fontSize = labelSize;
+        _textMesh.transform.localScale = Vector3.one;
+
+        // Ensure the label immediately adopts the correct overlay state
+        UpdateOverlayState();
     }
 }
