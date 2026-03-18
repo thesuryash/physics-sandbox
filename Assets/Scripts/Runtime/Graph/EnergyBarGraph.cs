@@ -87,7 +87,7 @@ public class EnergyBarGrapher : MonoBehaviour
         label.show = true;
         label.position = LabelStyle.Position.Top;
         label.numericFormatter = "F1";
-        label.formatter = "{value} J";
+        label.formatter = "{c} J";
 
         // --- THE ANIMATION: Ensure the smooth "Rise" effect is turned on ---
         serie.animation.enable = true;
