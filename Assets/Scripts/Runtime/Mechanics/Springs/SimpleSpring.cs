@@ -4,8 +4,8 @@ using UnityEngine;
 public class SimpleSpring : MonoBehaviour
 {
     [Header("Physics Objects")]
-    public Rigidbody anchor;
-    public Rigidbody bob;
+    public PhysicsBody anchor;
+    public PhysicsBody bob;
 
     [Header("Spring Constants")]
     public float k = 50f;

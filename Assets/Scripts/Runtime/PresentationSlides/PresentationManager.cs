@@ -1,13 +1,16 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
 
 public class PresentationManager : MonoBehaviour
 {
     public static PresentationManager Instance { get; private set; }
 
-    // The central library: Key is the 'slideName'
-    private Dictionary<string, SlideData> _slideLibrary = new Dictionary<string, SlideData>();
+    [Header("Active Lesson")]
+    public LessonPack currentLesson;
+    private int _currentSlideIndex = 0;
+
+    // The event that tells all screens to update
+    public delegate void OnSlideChanged(Texture2D newTexture);
+    public static event OnSlideChanged SlideChangedEvent;
 
     void Awake()
     {
@@ -15,19 +18,46 @@ public class PresentationManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    /// <summary>
-    /// Registers a slide into the library. 
-    /// Called during the "Ingestion Phase" (Upload/Import).
-    /// </summary>
-    public void RegisterSlide(SlideData data)
+    void Start()
     {
-        if (!_slideLibrary.ContainsKey(data.slideName))
-            _slideLibrary.Add(data.slideName, data);
+        // Broadcast the first slide when the scene starts
+        if (currentLesson != null && currentLesson.slides.Count > 0)
+        {
+            UpdateScreens();
+        }
     }
 
-    public SlideData GetSlide(string name)
+    public void NextSlide()
     {
-        _slideLibrary.TryGetValue(name, out SlideData data);
-        return data;
+        if (currentLesson == null || currentLesson.slides.Count == 0) return;
+
+        if (_currentSlideIndex < currentLesson.slides.Count - 1)
+        {
+            _currentSlideIndex++;
+            UpdateScreens();
+        }
+    }
+
+    public void PreviousSlide()
+    {
+        if (currentLesson == null || currentLesson.slides.Count == 0) return;
+
+        if (_currentSlideIndex > 0)
+        {
+            _currentSlideIndex--;
+            UpdateScreens();
+        }
+    }
+
+    private void UpdateScreens()
+    {
+        SlideData currentSlide = currentLesson.slides[_currentSlideIndex];
+
+        if (currentSlide != null && currentSlide.slideTexture != null)
+        {
+            // Yell out to the room: "Hey everyone, change to this texture!"
+            SlideChangedEvent?.Invoke(currentSlide.slideTexture);
+            Debug.Log($"[PresentationManager] Slide changed to: {currentSlide.slideName}");
+        }
     }
 }

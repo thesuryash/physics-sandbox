@@ -27,7 +27,8 @@ public class Arrow2D : MonoBehaviour
     public float headWidth = 0.4f;
 
     [Header("Visuals")]
-    public Color color = UnityEngine.Color.red;
+    [Tooltip("The base color for the arrow.")]
+    public Color arrowColor = Color.cyan;
     [SerializeField] private Material _baseMaterial;
 
     [Header("Stabilization")]
@@ -38,11 +39,11 @@ public class Arrow2D : MonoBehaviour
     public bool autoUpdateFromReference = true;
     public enum ForceSource { Manual, Velocity, Gravity, NormalForce, Friction }
     public ForceSource source = ForceSource.Manual;
-
+    public Color labelBgColor = Color.black;
     private MeshFilter _meshFilter;
     private MeshRenderer _meshRenderer;
     private Mesh _mesh;
-    private Rigidbody _rb;
+    private PhysicsBody _rb;
     private Camera _mainCamera;
 
     private TextMeshPro _textMesh;
@@ -106,7 +107,7 @@ public class Arrow2D : MonoBehaviour
     {
         if (!Application.isPlaying || !autoUpdateFromReference) return;
 
-        if (_rb == null) _rb = GetComponentInParent<Rigidbody>();
+        if (_rb == null) _rb = GetComponentInParent<PhysicsBody>();
         if (_rb == null) return;
 
         float targetMag = 0f;
@@ -200,9 +201,11 @@ public class Arrow2D : MonoBehaviour
         }
     }
 
+
+
     public void UpdateData(float magnitude, Vector3 direction, Color newColor, bool forceSnap = false)
     {
-        color = newColor;
+        arrowColor = newColor; // Updated to use the single serialized color reference
 
         // If playing AND we aren't forcing a snap, smooth it out
         if (Application.isPlaying && !forceSnap)
@@ -218,6 +221,50 @@ public class Arrow2D : MonoBehaviour
             BuildArrow();
         }
     }
+
+
+
+
+    //private void OnGUI()
+    //{
+    //    if (string.IsNullOrEmpty(labelText)) return;
+        
+    //    Camera cam = Camera.main;
+    //    if (cam == null) return;
+
+    //    // Calculate where the arrow tip is on the 2D screen
+    //    // (Adjust 'transform.position' if you want the label at the tip vs the base)
+    //    Vector3 screenPos = cam.WorldToScreenPoint(transform.position);
+
+    //    // If the arrow is behind the camera, don't draw the label
+    //    if (screenPos.z < 0) return; 
+
+    //    // 1. Setup the text style
+    //    GUIStyle style = new GUIStyle(GUI.skin.label);
+    //    style.fontStyle = FontStyle.Bold;
+    //    style.normal.textColor = labelColor;
+
+    //    // 2. Calculate exactly how big the text is
+    //    Vector2 textSize = style.CalcSize(new GUIContent(labelText));
+
+    //    // Center the text box over the position
+    //    Rect textRect = new Rect(screenPos.x - (textSize.x / 2), (Screen.height - screenPos.y) - (textSize.y / 2), textSize.x, textSize.y);
+        
+    //    // Add 4 pixels of padding to the background box so it isn't completely flush with the text
+    //    Rect bgRect = new Rect(textRect.x - 4, textRect.y - 2, textRect.width + 8, textRect.height + 4);
+
+    //    // 3. DRAW THE BACKGROUND
+    //    GUI.color = labelBgColor; 
+    //    GUI.DrawTexture(bgRect, Texture2D.whiteTexture);
+
+    //    // 4. DRAW THE TEXT
+    //    GUI.color = Color.white; // Reset master GUI color so text draws normally
+    //    GUI.Label(textRect, labelText, style);
+    //}
+
+
+
+
 
     private void ApplyStabilizedData(float targetLength, Vector3 targetUp)
     {
@@ -258,9 +305,10 @@ public class Arrow2D : MonoBehaviour
             UpdateOverlayState();
         }
 
+        // Apply the serialized 'arrowColor'
         MaterialPropertyBlock props = new MaterialPropertyBlock();
-        props.SetColor("_Color", color);
-        props.SetColor("_BaseColor", color);
+        props.SetColor("_Color", arrowColor);
+        props.SetColor("_BaseColor", arrowColor);
         _meshRenderer.SetPropertyBlock(props);
 
         GenerateMesh();

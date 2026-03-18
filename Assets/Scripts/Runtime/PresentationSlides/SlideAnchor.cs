@@ -1,38 +1,28 @@
 using UnityEngine;
-using System;
 
 public class SlideAnchor : MonoBehaviour
 {
-    [Header("Reference Settings")]
-    public string linkedSlideName; // The name defined in the PresentationManager
-    public bool autoDisplayOnStart = true;
-
     [Header("Visual Implementation")]
-    public Renderer displayQuad; // A simple Quad mesh to show the slide
+    public Renderer displayQuad;
 
-    void Start()
+    void OnEnable()
     {
-        if (autoDisplayOnStart)
-        {
-            ApplySlide();
-        }
+        // Listen for the manager's broadcast
+        PresentationManager.SlideChangedEvent += ApplySlide;
     }
 
-    public void ApplySlide()
+    void OnDisable()
     {
-        if (PresentationManager.Instance == null) return;
+        // Stop listening if this screen is destroyed or turned off
+        PresentationManager.SlideChangedEvent -= ApplySlide;
+    }
 
-        SlideData data = PresentationManager.Instance.GetSlide(linkedSlideName);
-
-        if (data != null && displayQuad != null)
+    private void ApplySlide(Texture2D newTexture)
+    {
+        if (displayQuad != null)
         {
-            // Apply the slide texture to the 3D object's material
-            displayQuad.material.mainTexture = data.slideTexture;
-            Debug.Log($"[SlideAnchor] {name} linked to: {linkedSlideName}");
-        }
-        else
-        {
-            throw new Exception($"Slide '{linkedSlideName}' not found in Library or DisplayQuad missing.");
+            // Apply the texture to the material
+            displayQuad.material.mainTexture = newTexture;
         }
     }
 }

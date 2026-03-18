@@ -40,8 +40,8 @@ public class InclinedPlane : MonoBehaviour
                 cube.name = "RampMesh";
                 cube.transform.SetParent(this.transform);
 
-                // Remove the default Rigidbody if one exists (we want a static collider)
-                DestroyImmediate(cube.GetComponent<Rigidbody>());
+                // Remove the default PhysicsBody if one exists (we want a static collider)
+                DestroyImmediate(cube.GetComponent<PhysicsBody>());
 
                 _ramp = cube.transform;
             }

@@ -1,10 +1,13 @@
 using UnityEngine;
 
-[System.Serializable]
-public class SlideData
+// This attribute adds a new option in Unity's "Create" menu
+[CreateAssetMenu(fileName = "NewSlide", menuName = "Physics Sandbox/Slide Data")]
+public class SlideData : ScriptableObject
 {
-    public string slideName;      // The name the educator assigns
-    public string originalIndex;  // Slide number from original PPT
-    public Texture2D slideTexture; // The image of the slide
-    public string description;    // Any metadata or alt-text
+    public string slideName;      // E.g., "Newton_Law_1"
+    public string originalIndex;  // E.g., "Slide 3"
+    public Texture2D slideTexture;
+
+    [TextArea(3, 10)] // Makes the text box bigger in the Inspector
+    public string description;
 }

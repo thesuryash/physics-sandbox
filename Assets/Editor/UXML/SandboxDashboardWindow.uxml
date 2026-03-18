@@ -1,16 +1,24 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
   <ui:VisualElement style="flex-direction: row; flex-grow: 1; padding: 10px;">
+    
     <ui:VisualElement style="width: 240px; margin-right: 12px;">
       <ui:Label text="Physics Sandbox" style="unity-font-style: bold; font-size: 14px; margin-bottom: 8px;" />
+      
+      <ui:VisualElement style="flex-direction: row; margin-bottom: 8px;">
+        <ui:Button name="tabModules" text="MODULES" style="flex-grow: 1; padding: 5px; font-size: 11px; unity-font-style: bold; margin-right: 2px;" />
+        <ui:Button name="tabModels" text="MODELS" style="flex-grow: 1; padding: 5px; font-size: 11px; unity-font-style: bold; margin-left: 2px;" />
+      </ui:VisualElement>
+
       <ui:Label text="Areas" style="opacity: 0.8; margin-bottom: 6px;" />
       <ui:ListView name="areaList" style="flex-grow: 1;" />
     </ui:VisualElement>
 
     <ui:VisualElement style="flex-grow: 1;">
       <ui:Label name="contentHeader" text="Dashboard" style="unity-font-style: bold; font-size: 16px; margin-bottom: 8px;" />
-      <ui:ScrollView style="flex-grow: 1;">
+      <ui:ScrollView style="flex-grow: 1; background-color: rgba(0,0,0,0.1); padding: 10px; border-radius: 5px;">
         <ui:VisualElement name="contentRoot" />
       </ui:ScrollView>
     </ui:VisualElement>
+    
   </ui:VisualElement>
 </ui:UXML>
