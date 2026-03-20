@@ -12,10 +12,11 @@ namespace ImportExport.Export
             this.registry = registry;
         }
 
-        // Returns a list of IDs representing the objects this GameObject depends on
         public List<string> GetDependencies(GameObject obj)
         {
-            return null;
+            // Returning an empty list for now instead of null so the JSON serializes cleanly.
+            // We will write the reflection logic for this later!
+            return new List<string>();
         }
     }
 }

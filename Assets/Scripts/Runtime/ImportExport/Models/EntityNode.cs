@@ -6,6 +6,9 @@ namespace ImportExport.Models
     [JsonObject(MemberSerialization.OptIn)]
     public class EntityNode
     {
+        [JsonProperty("parentId")]
+        public string ParentId { get; set; } // The ID of the parent GameObject
+
         [JsonProperty("id")]
         public string Id { get; set; }
 

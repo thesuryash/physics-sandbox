@@ -1,15 +1,17 @@
-using System;
 using System.Collections.Generic;
 using ImportExport.Models;
+using UnityEngine;
 
 namespace ImportExport.Import
 {
     public class GraphSorter
     {
-        // Takes the raw list of nodes and returns them sorted by dependency
         public List<EntityNode> Sort(List<EntityNode> nodes)
         {
-            return null;
+            // For now, since dependencies are empty, we just return the original list.
+            // We will drop the DFS (Depth First Search) cycle-detection logic here 
+            // once we start linking springs and anchors!
+            return nodes;
         }
     }
 }
