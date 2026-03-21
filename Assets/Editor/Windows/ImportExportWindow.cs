@@ -60,7 +60,6 @@ public class ImportExportWindow : EditorWindow
         }
 
         GUILayout.Space(5);
-
         serializedWindow.Update();
         EditorGUILayout.PropertyField(objectsToExportProp, true);
         serializedWindow.ApplyModifiedProperties();
@@ -68,11 +67,19 @@ public class ImportExportWindow : EditorWindow
         GUILayout.Space(10);
 
         GUILayout.BeginHorizontal();
+        // Allow manual typing OR browsing
         exportFilePath = EditorGUILayout.TextField("Save Path", exportFilePath);
+
         if (GUILayout.Button("Browse", GUILayout.Width(75)))
         {
-            string path = EditorUtility.SaveFilePanel("Save Export JSON", "", "FullSceneExport", "json");
-            if (!string.IsNullOrEmpty(path)) exportFilePath = path;
+            // This opens the OS window. The third parameter is the DEFAULT name.
+            string path = EditorUtility.SaveFilePanel("Save Export JSON", "", "NewSceneExport", "json");
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                exportFilePath = path; // This MUST update the text field
+                Repaint(); // Forces the window to refresh the text immediately
+            }
         }
         GUILayout.EndHorizontal();
 
@@ -83,8 +90,12 @@ public class ImportExportWindow : EditorWindow
                 EditorUtility.DisplayDialog("Error", "List is empty or path is invalid!", "OK");
                 return;
             }
+
             exportManager.ExportScene(objectsToExport, exportFilePath);
-            EditorUtility.DisplayDialog("Success", "Export Complete!", "OK");
+
+            // Refresh the AssetDatabase so the file shows up in Unity's Project folder immediately
+            AssetDatabase.Refresh();
+            EditorUtility.DisplayDialog("Success", "File saved to: " + exportFilePath, "OK");
         }
     }
 
@@ -112,8 +123,13 @@ public class ImportExportWindow : EditorWindow
                 return;
             }
 
-            importManager.ImportScene(importFilePath);
-            EditorUtility.DisplayDialog("Success", "Reconstruction complete! Check your Hierarchy.", "OK");
+            // THE FUNDAMENTAL FIX: 
+            // Step out of the restricted OnGUI loop and execute on the next clean Editor frame.
+            EditorApplication.delayCall += () =>
+            {
+                importManager.ImportScene(importFilePath);
+                EditorUtility.DisplayDialog("Success", "Reconstruction complete! Check your Hierarchy.", "OK");
+            };
         }
     }
 

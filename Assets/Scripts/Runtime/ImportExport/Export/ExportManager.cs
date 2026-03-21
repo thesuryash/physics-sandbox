@@ -20,10 +20,12 @@ namespace ImportExport.Export
         }
 
         // The main public method to kick off the export process
+        private HashSet<GameObject> processedObjects = new HashSet<GameObject>();
         public void ExportScene(List<GameObject> rootObjects, string filePath)
         {
             // Always clear the registry before a new export so we don't hold old data
             idRegistry.Clear();
+            processedObjects.Clear(); // Clear the safety set
 
             SceneManifest manifest = new SceneManifest
             {
@@ -34,7 +36,7 @@ namespace ImportExport.Export
             // Loop through the given objects and flatten them into our list
             foreach (GameObject obj in rootObjects)
             {
-                if (obj != null)
+                if (obj != null && !processedObjects.Contains(obj))
                 {
                     ProcessTree(obj, manifest.Entities);
                 }
@@ -52,11 +54,14 @@ namespace ImportExport.Export
         // Recursively processes an object and all its children, flattening them into the manifest
         private void ProcessTree(GameObject obj, List<EntityNode> entitiesList, string parentId = null)
         {
-            if (obj.hideFlags != HideFlags.None) return;
+            // Skip internal Unity Editor objects
+            if (obj.hideFlags != HideFlags.None || processedObjects.Contains(obj)) return;
+
+            processedObjects.Add(obj); // Mark as processed
 
             EntityNode node = new EntityNode();
             node.Id = idRegistry.GetOrAssignId(obj);
-            node.ParentId = parentId; // Save the parent's ID
+            node.ParentId = parentId; // CRITICAL: This links the child to the parent
             node.Name = obj.name;
             node.Transform = dataExtractor.ExtractTransform(obj.transform);
             node.Components = dataExtractor.ExtractComponents(obj);
@@ -64,9 +69,10 @@ namespace ImportExport.Export
 
             entitiesList.Add(node);
 
+            // Drill down into every child in the hierarchy
             foreach (Transform child in obj.transform)
             {
-                // Pass THIS object's ID as the parent for the next level
+                // Pass the CURRENT node's ID as the parentId for the next generation
                 ProcessTree(child.gameObject, entitiesList, node.Id);
             }
         }
