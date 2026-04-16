@@ -36,19 +36,19 @@ You can pin installation to a ref by appending it to the URL:
 - Branch:
 
   ```text
-  https://github.com/<owner>/physics-sandbox.git#main
+  https://github.com/thesuryash/physics-sandbox.git#main
   ```
 
 - Tag:
 
   ```text
-  https://github.com/<owner>/physics-sandbox.git#v1.0.0
+  https://github.com/thesuryash/physics-sandbox.git#v1.0.0
   ```
 
 - Commit:
 
   ```text
-  https://github.com/<owner>/physics-sandbox.git#<commit-sha>
+  https://github.com/thesuryash/physics-sandbox.git#<commit-sha>
   ```
 
 ## Install through `Packages/manifest.json`
@@ -58,7 +58,7 @@ You can also edit your Unity project's `Packages/manifest.json` directly:
 ```json
 {
   "dependencies": {
-    "com.yourorg.physics-sandbox": "https://github.com/<owner>/physics-sandbox.git#main"
+    "com.yourorg.physics-sandbox": "https://github.com/thesuryash/physics-sandbox.git#main"
   }
 }
 ```
