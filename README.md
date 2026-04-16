@@ -22,7 +22,7 @@ If `package.json` is missing, create it at the root before trying to install fro
 5. Enter this repository URL:
 
    ```text
-   https://github.com/<owner>/physics-sandbox.git
+   https://github.com/thesuryash/physics-sandbox.git
    ```
 
 6. Click **Add**.
