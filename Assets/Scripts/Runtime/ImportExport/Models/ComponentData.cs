@@ -14,6 +14,8 @@ namespace ImportExport.Models
         [JsonProperty("properties")]
         public Dictionary<string, object> Properties { get; set; }
 
+        public Dictionary<string, string> References { get; set; }
+
         public ComponentData()
         {
             Properties = new Dictionary<string, object>();

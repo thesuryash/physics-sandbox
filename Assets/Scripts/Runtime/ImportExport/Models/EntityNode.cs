@@ -25,6 +25,16 @@ namespace ImportExport.Models
         [JsonProperty("dependencies")]
         public List<string> Dependencies { get; set; }
 
+        //// THE FIX: We explicitly tell Newtonsoft it is allowed to save this!
+        //[JsonProperty("mesh")]
+        //public MeshData Mesh;
+
+        [Newtonsoft.Json.JsonProperty("mesh")]
+        public MeshData Mesh;
+
+        // Add this line for the textures!
+        [Newtonsoft.Json.JsonProperty("material")]
+        public MaterialData Material;
         public EntityNode()
         {
             Components = new List<ComponentData>();

@@ -28,6 +28,9 @@ public class MaterialData
     public float staticFriction;
     public float dynamicFriction;
     public float bounciness;
+
+    public string ShaderName { get; internal set; }
+    public float[] Color { get; internal set; }
 }
 
 [Serializable]

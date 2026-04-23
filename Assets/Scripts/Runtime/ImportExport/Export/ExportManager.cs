@@ -15,7 +15,8 @@ namespace ImportExport.Export
         public ExportManager()
         {
             idRegistry = new IdRegistry();
-            dataExtractor = new DataExtractor();
+            // CHANGE THIS LINE: Pass the idRegistry into the DataExtractor
+            dataExtractor = new DataExtractor(idRegistry);
             dependencyAnalyzer = new DependencyAnalyzer(idRegistry);
         }
 
@@ -65,6 +66,8 @@ namespace ImportExport.Export
             node.Name = obj.name;
             node.Transform = dataExtractor.ExtractTransform(obj.transform);
             node.Components = dataExtractor.ExtractComponents(obj);
+            node.Mesh = dataExtractor.ExtractMesh(obj);
+            node.Material = dataExtractor.ExtractMaterial(obj);
             node.Dependencies = dependencyAnalyzer.GetDependencies(obj);
 
             entitiesList.Add(node);

@@ -15,10 +15,25 @@ public class InclinedPlane : MonoBehaviour
     private Transform _ramp;
     private EnvironmentSurface _surface;
 
+    //private void OnValidate()
+    //{
+    //    // Updates the shape in real-time while editing in the Inspector
+    //    BuildStructure();
+    //}
+
     private void OnValidate()
     {
-        // Updates the shape in real-time while editing in the Inspector
-        BuildStructure();
+#if UNITY_EDITOR
+        // Safely delay the structural changes until after Unity finishes serializing/importing.
+        // This completely eliminates the "SendMessage cannot be called" errors.
+        UnityEditor.EditorApplication.delayCall += () =>
+        {
+            // Safety check: Ensure the object hasn't been deleted while waiting
+            if (this == null) return;
+
+            BuildStructure();
+        };
+#endif
     }
 
     private void Start()
