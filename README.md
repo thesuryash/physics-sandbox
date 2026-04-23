@@ -78,3 +78,15 @@ physics-sandbox/
 ```
 
 This keeps the package compatible with Unity Package Manager expectations.
+
+## Vector field module (3D volume)
+
+A volume-based field architecture is included under `Runtime/` with details in `Documentation~/VectorFieldArchitecture.md`.
+
+- `Runtime/Fields/FieldSystem3D.cs`: 3D grid + 3D vector simulation using Jobs + Burst.
+- `Runtime/Fields/FieldGrid3D.cs`: lattice indexing for `X*Y*Z` samples.
+- `Runtime/Fields/FieldSourceBase.cs`: extensible source definitions (radial/uniform/vortex).
+- `Runtime/Visualization/FieldArrowPool.cs`: pooled arrow transforms.
+- `Runtime/Visualization/FieldArrowRenderer.cs`: maps vectors to arrow visuals.
+
+This targets movable sampled volumes like `3x3x3`, `10x10x10`, etc.
