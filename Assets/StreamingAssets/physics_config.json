@@ -1,0 +1,58 @@
+{
+  "globalSettings": {
+    "gravity": {
+      "x": 0.0,
+      "y": -9.81,
+      "z": 0.0
+    },
+    "timeScale": 1.0,
+    "airDensity": 1.225,
+    "bounceThreshold": 0.2
+  },
+  "materials": [
+    {
+      "id": "Wood",
+      "color": "#8B4513",
+      "staticFriction": 0.6,
+      "dynamicFriction": 0.4,
+      "bounciness": 0.1
+    },
+    {
+      "id": "Steel",
+      "color": "#C0C0C0",
+      "staticFriction": 0.4,
+      "dynamicFriction": 0.3,
+      "bounciness": 0.0
+    },
+    {
+      "id": "Rubber",
+      "color": "#1A1A1A",
+      "staticFriction": 0.9,
+      "dynamicFriction": 0.8,
+      "bounciness": 0.8
+    },
+    {
+      "id": "Ice",
+      "color": "#A5F2F3",
+      "staticFriction": 0.1,
+      "dynamicFriction": 0.05,
+      "bounciness": 0.05
+    }
+  ],
+  "interactions": [
+    {
+      "materialA": "Wood",
+      "materialB": "Ice",
+      "staticFriction": 0.2,
+      "dynamicFriction": 0.1,
+      "restitution": 0.0
+    },
+    {
+      "materialA": "Rubber",
+      "materialB": "Concrete",
+      "staticFriction": 1.0,
+      "dynamicFriction": 0.8,
+      "restitution": 0.6
+    }
+  ]
+}
