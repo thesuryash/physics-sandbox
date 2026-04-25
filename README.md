@@ -1,92 +1,152 @@
-# Physics Sandbox Unity Package
+# Physics Sandbox
 
-This repository can be consumed directly by Unity's Package Manager using a Git URL.
+**An interactive, no-code Unity environment for teaching physics in the classroom.**
 
-## Prerequisites
+Physics Sandbox is a Unity-based educational simulation tool that lets instructors build, configure, and demonstrate physics scenarios without writing any code. It covers classical mechanics, aerodynamics, electromagnetism, and energy analysis through real-time, interactive 3D scenes — all controlled from a single in-editor dashboard.
 
-- Unity 2019.4 or newer (recommended: Unity 2021 LTS+).
-- A valid `package.json` at the repository root that includes at minimum:
-  - `name` (for example: `com.yourorg.physics-sandbox`)
-  - `version` (for example: `1.0.0`)
-  - `displayName`
-  - `unity` (minimum supported Unity version)
+---
 
-If `package.json` is missing, create it at the root before trying to install from Git.
+## What It Does
 
-## Install from a GitHub URL in Unity
+Students and instructors can:
 
-1. Open your Unity project.
-2. Go to **Window > Package Manager**.
-3. Click the **+** button in the top-left of the Package Manager window.
-4. Select **Add package from git URL...**.
-5. Enter this repository URL:
+- Spawn physical objects and configure their mass, density, and material properties
+- Visualize forces on any body in real time with Free Body Diagrams
+- Simulate aerodynamic drag with a directional baked lookup model
+- Build and run spring, inclined plane, and projectile scenarios
+- Explore electric charge behavior with trail visualization
+- Plot kinetic, potential, and total energy live on bar charts
+- Visualize 3D vector fields (radial, uniform, vortex) with Burst-computed arrow grids
+- Load structured lesson packs and navigate slides without leaving the editor
+- Export and restore full scenes to JSON for sharing and grading
 
-   ```text
-   https://github.com/thesuryash/physics-sandbox.git
+---
+
+## Feature Overview
+
+### Physics Systems
+
+| System | Description |
+|---|---|
+| **Mass & Bodies** | Volume-based mass calculation, density and material assignment per object |
+| **Air Drag** | Linear and quadratic drag models with per-object directional baked lookup tables |
+| **Free Body Diagrams** | Real-time force arrows (gravity, normal, friction, drag, net) on any Rigidbody |
+| **Springs** | Hooke's law spring between any two bodies with live visual rendering |
+| **Inclined Planes** | Procedurally generated ramps with configurable angle, length, and material |
+| **Vector Fields** | 3D field grid (radial, uniform, vortex sources) computed with Unity Burst |
+| **Electromagnetism** | Charge trail visualization for moving charged particles |
+| **Energy Graphs** | Live KE / PE / TE bar charts locked to initial total energy for scale stability |
+| **Paths** | Linear waypoint and parametric curved path rendering |
+| **Environment** | JSON-configured material library (friction, bounciness) applied globally to surfaces |
+
+### Educator Tools
+
+| Tool | Description |
+|---|---|
+| **No-Code Dashboard** | In-editor control panel covering every system — no scripting required |
+| **Presentation Mode** | Load and navigate structured lesson packs (slides + notes) inside the editor |
+| **Scene Import / Export** | Serialize and restore full scenes to `.json` — share setups between computers |
+| **Model Library** | Drag-and-drop 3D model importer (.obj, .fbx, .gltf, .glb) with visual grid browser |
+| **Lesson Importer** | Batch-import a folder of slide images into a structured LessonPack asset |
+
+---
+
+## The Dashboard
+
+Open via **Physics Sandbox → Dashboard** in the Unity menu bar.
+
+Every system is accessible from a single collapsible panel — no Inspector hunting, no scripting:
+
+| Area | What You Can Do |
+|---|---|
+| **Environment** | Set gravity, configure material surfaces, create floors and ramps, control simulation speed |
+| **Objects** | Spawn primitives, configure mass and density, bake drag data per object |
+| **Free Body Diagrams** | Add FBDs to any selected object, toggle all FBDs on/off at once |
+| **Forces** | Create springs between two selected objects, draw linear or curved paths |
+| **Fields & EM** | Spawn field sources (radial, uniform, vortex), manage charge trails |
+| **Analysis** | Attach energy graphs to any body in the scene |
+| **Presentations** | Load a lesson pack, navigate slides forward and back |
+| **Scene I/O** | Export or import the full scene to a shareable JSON file |
+
+---
+
+## Architecture
+
+```
+Assets/Scripts/Runtime/
+├── Clock/              Time control — pause, play, speed multiplier
+├── Drag/               Aerodynamic drag with baked directional lookup tables
+├── Electromagnetism/   Charge trail visualization
+├── Environment/        JSON-driven physics material config for surfaces
+├── Field/              3D vector field (Burst parallel jobs, radial/uniform/vortex)
+├── FBD/                Free body diagram force rendering
+├── Graph/              Real-time energy bar charts (XCharts)
+├── ImportExport/       Full scene serialization and 3-pass reconstruction
+├── Mass/               Volume-based mass, density, and material sync
+├── Mechanics/Springs/  Hooke's law spring physics
+├── Path/               Linear waypoint and parametric curved paths
+├── PresentationSlides/ Lesson pack and slide ScriptableObjects
+└── Visuals/            Arrow pool, field arrow renderer, 2D procedural arrows
+
+Assets/Editor/
+├── Windows/            Dashboard, Import/Export, Lesson Importer, component editors
+├── UXML/               UI Toolkit layout files
+└── USS/                Stylesheet files
+```
+
+### Scene Serialization — How It Works
+
+Export serializes every GameObject in the active scene into a flat list of `EntityNode` records (transform, mesh, materials, component data, parent ID) and writes them to a `.json` file. Import reconstructs the scene in three passes:
+
+1. **Spawn** — create GameObjects with base components
+2. **Mesh rebuild** — reconstruct geometry from stored vertex/triangle/UV arrays
+3. **Reference resolution** — wire up cross-object references via GUID registry
+
+---
+
+## Technical Requirements
+
+| Requirement | Detail |
+|---|---|
+| Unity version | 2022.3 LTS or newer |
+| Render pipeline | Built-in (URP compatible with minor material adjustments) |
+| Key packages | Unity.Burst, Unity.Jobs, Unity.Mathematics, TextMeshPro |
+| Third-party | [XCharts](https://github.com/XCharts-Team/XCharts) (energy graphs), Newtonsoft.Json (scene I/O) |
+
+---
+
+## Getting Started
+
+1. Clone this repository:
    ```
+   git clone https://github.com/thesuryash/physics-sandbox.git
+   ```
+2. Open the project in **Unity 2022.3 LTS** or newer.
+3. Open the dashboard: **Physics Sandbox → Dashboard**
+4. Open a scene from `Assets/Scenes/` or create a new one.
+5. Use the dashboard to spawn objects and configure your simulation.
 
-6. Click **Add**.
+The physics material config loads automatically from `Assets/StreamingAssets/physics_config.json`. No additional setup is required.
 
-Unity will fetch the package and add it to your project.
+---
 
-## Install a specific branch, tag, or commit
+## Presentations & Lessons
 
-You can pin installation to a ref by appending it to the URL:
+Lessons are structured as **LessonPack** ScriptableObjects containing ordered **SlideData** assets (title, description, texture). To create a lesson:
 
-- Branch:
+1. Prepare a folder of slide images (`.png` or `.jpg`)
+2. Open **Physics Sandbox → Lesson Importer**
+3. Drop the folder into the importer — it generates all assets automatically
+4. Load the LessonPack from the Dashboard → Presentations panel and navigate slides during your session
 
-  ```text
-  https://github.com/thesuryash/physics-sandbox.git#main
-  ```
+---
 
-- Tag:
+## License
 
-  ```text
-  https://github.com/thesuryash/physics-sandbox.git#v1.0.0
-  ```
+[MIT](LICENSE) — free to use, adapt, and share in educational settings.
 
-- Commit:
+---
 
-  ```text
-  https://github.com/thesuryash/physics-sandbox.git#<commit-sha>
-  ```
+## Author
 
-## Install through `Packages/manifest.json`
-
-You can also edit your Unity project's `Packages/manifest.json` directly:
-
-```json
-{
-  "dependencies": {
-    "com.yourorg.physics-sandbox": "https://github.com/thesuryash/physics-sandbox.git#main"
-  }
-}
-```
-
-## Recommended repository structure for Unity packages
-
-At minimum:
-
-```text
-physics-sandbox/
-├─ package.json
-├─ Runtime/
-├─ Editor/                (optional)
-├─ Samples~/              (optional)
-├─ Documentation~/        (optional)
-└─ LICENSE
-```
-
-This keeps the package compatible with Unity Package Manager expectations.
-
-## Vector field module (3D volume)
-
-A volume-based field architecture is included under `Runtime/` with details in `Documentation~/VectorFieldArchitecture.md`.
-
-- `Runtime/Fields/FieldSystem3D.cs`: 3D grid + 3D vector simulation using Jobs + Burst.
-- `Runtime/Fields/FieldGrid3D.cs`: lattice indexing for `X*Y*Z` samples.
-- `Runtime/Fields/FieldSourceBase.cs`: extensible source definitions (radial/uniform/vortex).
-- `Runtime/Visualization/FieldArrowPool.cs`: pooled arrow transforms.
-- `Runtime/Visualization/FieldArrowRenderer.cs`: maps vectors to arrow visuals.
-
-This targets movable sampled volumes like `3x3x3`, `10x10x10`, etc.
+Built by **Suryash Malviya** as part of an ongoing educational physics simulation research project.
