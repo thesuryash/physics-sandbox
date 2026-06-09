@@ -73,6 +73,10 @@ mono_crash.*
 *.unitypackage.meta
 *.app
 
+# Third-party packages imported directly into Assets (use UPM instead)
+/[Aa]ssets/XCharts/
+/[Aa]ssets/XCharts.meta
+
 # Crashlytics generated file
 crashlytics-build.properties
 
