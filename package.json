@@ -2,8 +2,18 @@
   "name": "com.thesuryash.physics-sandbox",
   "version": "1.0.0",
   "displayName": "Physics Sandbox",
-  "description": "Reusable Unity physics sandbox tools, scripts, and simulation components.",
+  "description": "Reusable Unity physics sandbox tools — rigidbody mechanics, vector fields, drag, springs, FBD, import/export, and a Physics Sandbox editor dashboard.",
   "unity": "2022.3",
+  "keywords": [
+    "physics",
+    "sandbox",
+    "rigidbody",
+    "vector-field",
+    "drag",
+    "spring",
+    "fbd",
+    "education"
+  ],
   "author": {
     "name": "Suryash Malviya",
     "email": "suryashmalviya@gmail.com",

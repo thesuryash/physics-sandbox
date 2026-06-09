@@ -5,6 +5,12 @@ using UnityEngine.UIElements;
 
 public class ChargeFlowPreviewWindow : EditorWindow
 {
+    private static string PackageRoot()
+    {
+        var info = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(ChargeFlowPreviewWindow).Assembly);
+        return info != null ? info.assetPath : "Assets";
+    }
+
     //[MenuItem("Physics Sandbox/Charge Flow Preview")]
     public static void Open()
     {
@@ -15,17 +21,17 @@ public class ChargeFlowPreviewWindow : EditorWindow
 
     public void CreateGUI()
     {
-        var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-            "Assets/Editor/UXML/ChargeFlowPreviewWindow.uxml"
-        );
+        string uxmlPath = $"{PackageRoot()}/Editor/UXML/ChargeFlowPreviewWindow.uxml";
+        var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 
         if (uxml == null)
         {
-            rootVisualElement.Add(new Label("Missing UXML: Assets/Editor/UXML/ChargeFlowPreviewWindow.uxml"));
+            rootVisualElement.Add(new Label($"Missing UXML: {uxmlPath}"));
             return;
         }
 
         rootVisualElement.Add(uxml.CloneTree());
     }
 }
+
 #endif

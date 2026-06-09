@@ -10,6 +10,13 @@ using PhysicsSandbox.Fields;
 
 public class SandboxDashboardWindow : EditorWindow
 {
+    // Returns "Assets" in the dev project, or "Packages/<id>" when installed via UPM.
+    private static string PackageRoot()
+    {
+        var info = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(SandboxDashboardWindow).Assembly);
+        return info != null ? info.assetPath : "Assets";
+    }
+
     [MenuItem("Physics Sandbox/Dashboard")]
     public static void Open()
     {
@@ -57,8 +64,9 @@ public class SandboxDashboardWindow : EditorWindow
 
     public void CreateGUI()
     {
-        var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Editor/UXML/SandboxDashboardWindow.uxml");
-        if (uxml == null) { rootVisualElement.Add(new Label("Missing UXML: Assets/Editor/UXML/SandboxDashboardWindow.uxml")); return; }
+        string uxmlPath = $"{PackageRoot()}/Editor/UXML/SandboxDashboardWindow.uxml";
+        var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        if (uxml == null) { rootVisualElement.Add(new Label($"Missing UXML: {uxmlPath}")); return; }
 
         var tree = uxml.CloneTree();
         tree.style.flexGrow = 1;
