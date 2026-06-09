@@ -1,0 +1,16 @@
+{
+  "name": "com.thesuryash.physics-sandbox",
+  "version": "1.0.0",
+  "displayName": "Physics Sandbox",
+  "description": "Reusable Unity physics sandbox tools, scripts, and simulation components.",
+  "unity": "2022.3",
+  "author": {
+    "name": "Suryash Malviya",
+    "email": "suryashmalviya@gmail.com",
+    "url": "https://github.com/thesuryash"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thesuryash/physics-sandbox.git"
+  }
+}
