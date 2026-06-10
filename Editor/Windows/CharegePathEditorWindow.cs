@@ -8,7 +8,7 @@ public class ChargePathEditorWindow : EditorWindow
     private static string PackageRoot()
     {
         var info = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(ChargePathEditorWindow).Assembly);
-        return info != null ? $"{info.assetPath}/Assets" : "Assets";
+        return info?.assetPath ?? "Assets";
     }
 
     //[MenuItem("Physics Sandbox/Charge Path Editor")]
