@@ -1,7 +1,12 @@
 {
     "name": "PhysicsSandbox.Runtime",
     "rootNamespace": "PhysicsSandbox",
-    "references": [],
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.Mathematics",
+        "Unity.Burst",
+        "Unity.Collections"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

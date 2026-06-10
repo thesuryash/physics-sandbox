@@ -77,6 +77,14 @@ mono_crash.*
 /[Aa]ssets/XCharts/
 /[Aa]ssets/XCharts.meta
 
+# Unity template / project-specific files — not part of the redistributable package
+/[Aa]ssets/[Ss]cenes/SampleScene.unity
+/[Aa]ssets/[Ss]cenes/SampleScene.unity.meta
+/[Aa]ssets/Readme.asset
+/[Aa]ssets/Readme.asset.meta
+/[Aa]ssets/TutorialInfo/
+/[Aa]ssets/Settings/
+
 # Crashlytics generated file
 crashlytics-build.properties
 
