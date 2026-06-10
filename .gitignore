@@ -83,7 +83,17 @@ mono_crash.*
 /[Aa]ssets/Readme.asset
 /[Aa]ssets/Readme.asset.meta
 /[Aa]ssets/TutorialInfo/
+/[Aa]ssets/TutorialInfo.meta
 /[Aa]ssets/Settings/
+/[Aa]ssets/Settings.meta
+/[Aa]ssets/UniversalRenderPipelineGlobalSettings.asset
+/[Aa]ssets/UniversalRenderPipelineGlobalSettings.asset.meta
+
+# Unity project-level files not relevant to UPM consumers
+/ProjectSettings/
+/UIElementsSchema/
+/Packages/manifest.json
+/Packages/packages-lock.json
 
 # Crashlytics generated file
 crashlytics-build.properties
