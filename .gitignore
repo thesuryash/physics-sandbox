@@ -76,6 +76,8 @@ mono_crash.*
 # Third-party packages imported directly into Assets (use UPM instead)
 /[Aa]ssets/XCharts/
 /[Aa]ssets/XCharts.meta
+/[Aa]ssets/Blink/
+/[Aa]ssets/Blink.meta
 
 # Unity template / project-specific files — not part of the redistributable package
 /[Aa]ssets/[Ss]cenes/SampleScene.unity

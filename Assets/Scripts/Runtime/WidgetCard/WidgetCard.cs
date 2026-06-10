@@ -28,6 +28,9 @@ private float pinchReleaseCooldown = 0f;
 
         visualTree.CloneTree(this);
 
+        var styleSheet = Resources.Load<StyleSheet>("WidgetCardStyle");
+        if (styleSheet != null) styleSheets.Add(styleSheet);
+
         // 2. Grab references to the UI elements inside the template
         _contentContainer = this.Q<VisualElement>("content-container");
         _minimizeBtn = this.Q<Button>("minimize-btn");

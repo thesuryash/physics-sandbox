@@ -1,6 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
-    <Style src="WidgetCardStyle.uss" />
-    <ui:VisualElement class="widget-card">
+<ui:VisualElement class="widget-card">
         
         <ui:VisualElement class="widget-header">
             <ui:Button name="minimize-btn" text="▼" class="icon-btn" />

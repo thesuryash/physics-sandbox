@@ -422,12 +422,7 @@ public class SandboxDashboardWindow : EditorWindow
                         {
                             CustomRender = c =>
                             {
-                                BuildAutoUIFor<EnergyBarGrapher>(c, null, null, "📈");
-
-                                var btn = new Button(AddEnergyGraphToSelected) { text = "+ Add Energy Graph to Selected" };
-                                btn.AddToClassList("tool-button");
-                                btn.style.marginTop = 10;
-                                c.Add(btn);
+                                c.Add(new Label("Energy graph components require XCharts (not included). Install com.monitor1394.xcharts via UPM to use them.") { style = { whiteSpace = WhiteSpace.Normal, opacity = 0.6f } });
                             }
                         }
                     }
@@ -878,13 +873,6 @@ public class SandboxDashboardWindow : EditorWindow
         EditorGUIUtility.PingObject(go);
     }
 
-    private void AddEnergyGraphToSelected()
-    {
-        var go = Selection.activeGameObject;
-        if (go == null) { Debug.LogWarning("Dashboard: Select an object first."); return; }
-        if (go.GetComponent<EnergyBarGrapher>() != null) { Debug.Log($"Dashboard: {go.name} already has an energy graph."); return; }
-        Undo.AddComponent<EnergyBarGrapher>(go);
-    }
 
     private void CreatePresentationManager()
     {
