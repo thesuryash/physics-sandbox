@@ -14,7 +14,7 @@ public class SandboxDashboardWindow : EditorWindow
     private static string PackageRoot()
     {
         var info = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(SandboxDashboardWindow).Assembly);
-        return info != null ? info.assetPath : "Assets";
+        return info != null ? $"{info.assetPath}/Assets" : "Assets";
     }
 
     [MenuItem("Physics Sandbox/Dashboard")]
