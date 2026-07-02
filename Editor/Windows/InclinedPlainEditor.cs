@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.IO;
 using System.Linq;
 
 [CustomEditor(typeof(InclinedPlane))]
@@ -66,13 +65,12 @@ public class InclinedPlaneEditor : Editor
 
     private void LoadMaterialList()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "physics_config.json");
-        if (File.Exists(path))
+        var configAsset = Resources.Load<TextAsset>("physics_config");
+        if (configAsset != null)
         {
             try
             {
-                string json = File.ReadAllText(path);
-                PhysicsConfig config = JsonUtility.FromJson<PhysicsConfig>(json);
+                PhysicsConfig config = JsonUtility.FromJson<PhysicsConfig>(configAsset.text);
                 if (config != null && config.materials != null)
                 {
                     _materialOptions = config.materials.Select(m => m.id).ToArray();

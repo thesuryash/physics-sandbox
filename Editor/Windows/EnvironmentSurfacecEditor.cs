@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,14 +76,13 @@ public class EnvironmentSurfaceEditor : Editor
 
     private void LoadOptions()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "physics_config.json");
+        var configAsset = Resources.Load<TextAsset>("physics_config");
 
-        if (File.Exists(path))
+        if (configAsset != null)
         {
             try
             {
-                string json = File.ReadAllText(path);
-                PhysicsConfig config = JsonUtility.FromJson<PhysicsConfig>(json);
+                PhysicsConfig config = JsonUtility.FromJson<PhysicsConfig>(configAsset.text);
 
                 if (config != null && config.materials != null)
                 {

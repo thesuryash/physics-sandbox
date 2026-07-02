@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,19 +36,18 @@ public class EnvironmentManager : MonoBehaviour
 
     public void LoadConfig()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "physics_config.json");
+        var configAsset = Resources.Load<TextAsset>("physics_config");
 
-        if (!File.Exists(path))
+        if (configAsset == null)
         {
-            Debug.LogError($"[EnvironmentManager] Config file not found at: {path}");
+            Debug.LogError("[EnvironmentManager] Config not found. Expected a TextAsset named 'physics_config' under a Resources folder.");
             return;
         }
 
         try
         {
-            // 1. Read & Parse
-            string json = File.ReadAllText(path);
-            _config = JsonUtility.FromJson<PhysicsConfig>(json);
+            // 1. Parse the JSON text from the loaded TextAsset
+            _config = JsonUtility.FromJson<PhysicsConfig>(configAsset.text);
 
             // 2. Apply Global Settings
             Physics.gravity = _config.globalSettings.gravity;

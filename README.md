@@ -73,7 +73,7 @@ Every system is accessible from a single collapsible panel — no Inspector hunt
 ## Architecture
 
 ```
-Assets/Scripts/Runtime/
+Runtime/
 ├── Clock/              Time control — pause, play, speed multiplier
 ├── Drag/               Aerodynamic drag with baked directional lookup tables
 ├── Electromagnetism/   Charge trail visualization
@@ -88,10 +88,12 @@ Assets/Scripts/Runtime/
 ├── PresentationSlides/ Lesson pack and slide ScriptableObjects
 └── Visuals/            Arrow pool, field arrow renderer, 2D procedural arrows
 
-Assets/Editor/
+Editor/
 ├── Windows/            Dashboard, Import/Export, Lesson Importer, component editors
 ├── UXML/               UI Toolkit layout files
 └── USS/                Stylesheet files
+
+Samples~/DemoScenes/    Example lesson scenes and supporting assets (import from Package Manager)
 ```
 
 ### Scene Serialization — How It Works
@@ -115,18 +117,46 @@ Export serializes every GameObject in the active scene into a flat list of `Enti
 
 ---
 
-## Getting Started
+## Installation
 
-1. Clone this repository:
-   ```
-   git clone https://github.com/thesuryash/physics-sandbox.git
-   ```
-2. Open the project in **Unity 2022.3 LTS** or newer.
-3. Open the dashboard: **Physics Sandbox → Dashboard**
-4. Open a scene from `Assets/Scenes/` or create a new one.
-5. Use the dashboard to spawn objects and configure your simulation.
+Install via the Unity Package Manager using the git URL:
 
-The physics material config loads automatically from `Assets/StreamingAssets/physics_config.json`. No additional setup is required.
+1. In Unity, open **Window → Package Manager**.
+2. Click the **+** button → **Add package from git URL…**
+3. Enter:
+   ```
+   https://github.com/thesuryash/physics-sandbox.git
+   ```
+4. Click **Add**. Unity resolves the package and its dependencies
+   (Burst, Mathematics, Collections, TextMeshPro, Newtonsoft.Json) automatically.
+
+> Requires **Unity 2022.3 LTS** or newer.
+
+### Optional: energy graphs (XCharts)
+
+The live KE / PE / TE energy graphs require **XCharts**, which is not on the Unity
+registry and therefore cannot be a package dependency. To enable energy graphs,
+install it manually:
+
+- **Package Manager → + → Add package from git URL** →
+  `https://github.com/XCharts-Team/XCharts.git`
+
+Once `com.monitor1394.xcharts` is present, the `XCHARTS_PRESENT` define activates and
+the energy-graph features compile in automatically. Without it, the rest of the
+package works normally and the energy-graph UI shows a hint to install XCharts.
+
+### Importing the demo scenes
+
+Example lesson scenes ship as a package **sample**:
+
+1. Open **Window → Package Manager** and select **Physics Sandbox** in the list.
+2. Expand the **Samples** section and click **Import** next to **Demo Scenes**.
+3. Unity copies the scenes and supporting assets into
+   `Assets/Samples/Physics Sandbox/<version>/Demo Scenes/`.
+4. Open any scene from there, then open the dashboard: **Physics Sandbox → Dashboard**.
+
+The physics material config loads automatically from `Resources` (a `physics_config`
+`TextAsset` shipped in the package). No additional setup is required.
 
 ---
 
@@ -143,7 +173,7 @@ Lessons are structured as **LessonPack** ScriptableObjects containing ordered **
 
 ## License
 
-[MIT](LICENSE) — free to use, adapt, and share in educational settings.
+[MIT](LICENSE.md) — free to use, adapt, and share in educational settings.
 
 ---
 

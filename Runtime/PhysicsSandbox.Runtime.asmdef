@@ -14,6 +14,12 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.monitor1394.xcharts",
+            "expression": "",
+            "define": "XCHARTS_PRESENT"
+        }
+    ],
     "noEngineReferences": false
 }

@@ -2,7 +2,7 @@
   "name": "com.thesuryash.physics-sandbox",
   "version": "1.0.0",
   "displayName": "Physics Sandbox",
-  "description": "Reusable Unity physics sandbox tools — rigidbody mechanics, vector fields, drag, springs, FBD, import/export, and a Physics Sandbox editor dashboard.",
+  "description": "No-code Unity environment for building physics education simulations — rigidbody mechanics, vector fields, drag, springs, FBD, import/export, and a Physics Sandbox editor dashboard.",
   "unity": "2022.3",
   "keywords": [
     "physics",
@@ -21,6 +21,13 @@
     "com.unity.collections": "1.2.4",
     "com.unity.nuget.newtonsoft-json": "3.2.1"
   },
+  "samples": [
+    {
+      "displayName": "Demo Scenes",
+      "description": "Example lesson scenes and their supporting assets.",
+      "path": "Samples~/DemoScenes"
+    }
+  ],
   "author": {
     "name": "Suryash Malviya",
     "email": "suryashmalviya@gmail.com",

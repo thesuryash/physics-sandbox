@@ -977,12 +977,12 @@ public class SandboxDashboardWindow : EditorWindow
     private List<string> GetMaterialChoices()
     {
         var choices = new List<string> { "Generic" };
-        string path = Path.Combine(Application.streamingAssetsPath, "physics_config.json");
-        if (File.Exists(path))
+        var configAsset = Resources.Load<TextAsset>("physics_config");
+        if (configAsset != null)
         {
             try
             {
-                var config = JsonUtility.FromJson<PhysicsConfig>(File.ReadAllText(path));
+                var config = JsonUtility.FromJson<PhysicsConfig>(configAsset.text);
                 if (config?.materials?.Count > 0)
                 {
                     choices.Clear();
