@@ -10,6 +10,8 @@ namespace ImportExport.Import
 {
     public class ImportManager
     {
+        public static event Action<IReadOnlyList<string>> MissingComponentTypesDetected;
+
         private GraphSorter graphSorter;
         private EntityBuilder entityBuilder;
         private ReferenceResolver referenceResolver;
@@ -38,6 +40,11 @@ namespace ImportExport.Import
 
                 // Pass 1: Spawn all empty GameObjects and attach base components
                 var spawnedObjects = entityBuilder.BuildEntities(allEntities);
+
+                if (entityBuilder.MissingComponentTypes.Count > 0)
+                {
+                    MissingComponentTypesDetected?.Invoke(new List<string>(entityBuilder.MissingComponentTypes));
+                }
 
                 // Pass 1.5: Sculpt the 3D Meshes from the raw JSON data
                 RebuildMeshes(spawnedObjects, allEntities);

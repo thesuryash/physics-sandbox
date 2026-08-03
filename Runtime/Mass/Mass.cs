@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//[RequireComponent(typeof(PhysicsBody))]
+[RequireComponent(typeof(PhysicsBody))]
 public class Mass : MonoBehaviour
 {
     [Header("Flexible DNA")]
@@ -48,6 +48,7 @@ public class Mass : MonoBehaviour
     void Awake()
     {
         _rb = GetComponent<PhysicsBody>();
+        if (_rb == null) _rb = gameObject.AddComponent<PhysicsBody>();
 
         // --- NEW: AUTO-HEAL MANUAL MESH COLLIDERS ---
         // If you manually attach this to a GLB, it fixes the "None (Mesh)" bug instantly!
@@ -68,9 +69,6 @@ public class Mass : MonoBehaviour
         }
 
         UpdatePhysicalProperties();
-
-        PhysicsBody pb = GetComponent<PhysicsBody>();
-        if (pb == null) pb = gameObject.AddComponent<PhysicsBody>();
     }
 
     public void UpdatePhysicalProperties()

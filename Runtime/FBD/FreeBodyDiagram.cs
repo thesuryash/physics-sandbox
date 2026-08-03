@@ -77,10 +77,9 @@ public class FreeBodyDiagram : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<PhysicsBody>();
-        _massData = GetComponent<Mass>();
+        if (_rb == null) _rb = gameObject.AddComponent<PhysicsBody>();
 
-        PhysicsBody pb = GetComponent<PhysicsBody>();
-        if (pb == null) pb = gameObject.AddComponent<PhysicsBody>();
+        _massData = GetComponent<Mass>();
     }
 
     private void Start()

@@ -955,9 +955,11 @@ public class SandboxDashboardWindow : EditorWindow
         var go  = GameObject.CreatePrimitive(PrimitiveType.Cube);
         go.name = "Test Mass";
         go.transform.position = new Vector3(0, 2, 0);
-        var fbd  = go.AddComponent<FreeBodyDiagram>();
-        var mass = go.GetComponent<Mass>();
-        if (mass != null) mass.fbd = fbd;
+        if (go.GetComponent<PhysicsBody>() == null) go.AddComponent<PhysicsBody>();
+        var mass = go.GetComponent<Mass>() ?? go.AddComponent<Mass>();
+        var fbd  = go.GetComponent<FreeBodyDiagram>() ?? go.AddComponent<FreeBodyDiagram>();
+        mass.fbd = fbd;
+        mass.UpdatePhysicalProperties();
         Undo.RegisterCreatedObjectUndo(go, "Create Test Mass");
         Selection.activeGameObject = go;
         EditorGUIUtility.PingObject(go);

@@ -4,8 +4,8 @@ using UnityEngine;
 
 
 
-//[RequireComponent(typeof(Rigidbody))]
-//[RequireComponent(typeof(PhysicsBody))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PhysicsBody))]
 
 
 [RequireComponent(typeof(MeshFilter))]
@@ -105,6 +105,7 @@ public class RigidBodyDragApplier : MonoBehaviour
     {
 
         rb = GetComponent<PhysicsBody>();
+        if (rb == null) rb = gameObject.AddComponent<PhysicsBody>();
 
         rb.drag = 0f;
 
@@ -117,9 +118,6 @@ public class RigidBodyDragApplier : MonoBehaviour
             lookup = DirectionalDragLookup.LoadFromBinary(BinaryFilePath);
 
         }
-
-        PhysicsBody pb = GetComponent<PhysicsBody>();
-        if (pb == null) pb = gameObject.AddComponent<PhysicsBody>();
 
     }
 

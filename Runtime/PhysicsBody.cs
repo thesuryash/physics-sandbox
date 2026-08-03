@@ -8,8 +8,24 @@ public class PhysicsBody : MonoBehaviour
 
     void Awake()
     {
-        _rb3D = GetComponent<Rigidbody>();
+        EnsureBody();
+    }
+
+    private void Reset()
+    {
+        EnsureBody();
+    }
+
+    private void EnsureBody()
+    {
         _rb2D = GetComponent<Rigidbody2D>();
+        _rb3D = GetComponent<Rigidbody>();
+
+        if (_rb2D == null && _rb3D == null)
+        {
+            _rb3D = gameObject.AddComponent<Rigidbody>();
+        }
+
         _is2D = _rb2D != null;
     }
 

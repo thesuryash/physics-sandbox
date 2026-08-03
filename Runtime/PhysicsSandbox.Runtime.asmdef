@@ -3,9 +3,17 @@
     "rootNamespace": "PhysicsSandbox",
     "references": [
         "Unity.TextMeshPro",
+        "UnityEngine.UI",
         "Unity.Mathematics",
         "Unity.Burst",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Newtonsoft.Json",
+        "UnityEngine.PhysicsModule",
+        "UnityEngine.Physics2DModule",
+        "UnityEngine.UIElementsModule",
+        "UnityEngine.JSONSerializeModule",
+        "UnityEngine.ImageConversionModule",
+        "UnityEngine.InputLegacyModule"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -1,5 +1,7 @@
 # Physics Sandbox
 
+[![CI](https://github.com/thesuryash/physics-sandbox/actions/workflows/ci.yml/badge.svg)](https://github.com/thesuryash/physics-sandbox/actions/workflows/ci.yml)
+
 **An interactive, no-code Unity environment for teaching physics in the classroom.**
 
 Physics Sandbox is a Unity-based educational simulation tool that lets instructors build, configure, and demonstrate physics scenarios without writing any code. It covers classical mechanics, aerodynamics, electromagnetism, and energy analysis through real-time, interactive 3D scenes — all controlled from a single in-editor dashboard.
@@ -112,7 +114,7 @@ Export serializes every GameObject in the active scene into a flat list of `Enti
 |---|---|
 | Unity version | 2022.3 LTS or newer |
 | Render pipeline | Built-in (URP compatible with minor material adjustments) |
-| Key packages | Unity.Burst, Unity.Jobs, Unity.Mathematics, TextMeshPro |
+| Key packages | Unity.Burst, Unity.Mathematics, TextMeshPro, Unity UI |
 | Third-party | [XCharts](https://github.com/XCharts-Team/XCharts) (energy graphs), Newtonsoft.Json (scene I/O) |
 
 ---
@@ -128,7 +130,7 @@ Install via the Unity Package Manager using the git URL:
    https://github.com/thesuryash/physics-sandbox.git
    ```
 4. Click **Add**. Unity resolves the package and its dependencies
-   (Burst, Mathematics, Collections, TextMeshPro, Newtonsoft.Json) automatically.
+   (Burst, Mathematics, Collections, TextMeshPro, Unity UI, Newtonsoft.Json) automatically.
 
 > Requires **Unity 2022.3 LTS** or newer.
 
@@ -157,6 +159,37 @@ Example lesson scenes ship as a package **sample**:
 
 The physics material config loads automatically from `Resources` (a `physics_config`
 `TextAsset` shipped in the package). No additional setup is required.
+
+### Recovering missing scripts during JSON import
+
+When scene import encounters component types that are not installed in the current
+project, the editor prompts to recover matching `.cs` files from a GitHub LTS branch.
+Configure the source from **Physics Sandbox → Script Recovery → Configure GitHub
+Source**. By default it reads:
+
+```
+https://raw.githubusercontent.com/thesuryash/physics-sandbox/lts/ScriptRecovery~/script-index.json
+```
+
+The LTS branch should contain a script index with this shape:
+
+```json
+{
+  "scripts": [
+    {
+      "type": "MyNamespace.MyComponent",
+      "className": "MyComponent",
+      "path": "Runtime/MyNamespace/MyComponent.cs",
+      "aliases": ["LegacyComponentName"]
+    }
+  ]
+}
+```
+
+Use **Physics Sandbox → Script Recovery → Generate Local Script Index** on the LTS
+branch to generate the index from the package `Runtime` scripts. Downloaded files
+are written to `Assets/PhysicsSandbox/RecoveredScripts`, Unity recompiles them, and
+then the JSON import should be run again.
 
 ---
 

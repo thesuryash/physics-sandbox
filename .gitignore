@@ -11,7 +11,14 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Pp]ackages/
+/[Pp]roject[Ss]ettings/
 /[Mm]emoryCaptures/
+/[Ll]ogs.meta
+/[Tt]emp.meta
+/[Pp]ackages.meta
+/package.json.meta
+/*.md.meta
 
 # Auto-generated IDE / solution files
 .vs/
@@ -46,3 +53,16 @@ crashlytics-build.properties
 # OS files
 .DS_Store
 Thumbs.db
+
+# TestProject~ is a tracked scaffold (used by CI to install/compile this
+# package like a real user would), but its generated Unity cache/lock
+# files are not.
+/TestProject~/Library/
+/TestProject~/Temp/
+/TestProject~/Logs/
+/TestProject~/UserSettings/
+/TestProject~/obj/
+/TestProject~/artifacts/
+/TestProject~/Packages/packages-lock.json
+/TestProject~/*.csproj
+/TestProject~/*.sln

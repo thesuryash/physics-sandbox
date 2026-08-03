@@ -2,7 +2,8 @@
     "name": "PhysicsSandbox.Editor",
     "rootNamespace": "PhysicsSandbox.Editor",
     "references": [
-        "PhysicsSandbox.Runtime"
+        "PhysicsSandbox.Runtime",
+        "UnityEngine.UnityWebRequestModule"
     ],
     "includePlatforms": [
         "Editor"

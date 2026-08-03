@@ -8,8 +8,14 @@ namespace ImportExport.Import
 {
     public class EntityBuilder
     {
+        private readonly HashSet<string> missingComponentTypes = new HashSet<string>();
+
+        public IReadOnlyCollection<string> MissingComponentTypes => missingComponentTypes;
+
         public Dictionary<string, GameObject> BuildEntities(List<EntityNode> nodes)
         {
+            missingComponentTypes.Clear();
+
             var spawnedObjects = new Dictionary<string, GameObject>();
 
             // PASS 1: Create every object as INACTIVE to suppress OnValidate/Awake crashes
@@ -176,18 +182,25 @@ namespace ImportExport.Import
             {
                 try
                 {
+                    if (string.IsNullOrWhiteSpace(compData.Type))
+                    {
+                        continue;
+                    }
+
                     Type compType = Type.GetType(compData.Type);
                     if (compType == null)
                     {
+                        string typeName = compData.Type.Split(',')[0];
                         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                         {
-                            compType = assembly.GetType(compData.Type.Split(',')[0]);
+                            compType = assembly.GetType(typeName);
                             if (compType != null) break;
                         }
                     }
 
                     if (compType == null)
                     {
+                        missingComponentTypes.Add(compData.Type);
                         Debug.LogWarning($"Skipped missing script: {compData.Type}");
                         continue;
                     }

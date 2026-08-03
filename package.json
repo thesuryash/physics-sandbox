@@ -2,7 +2,7 @@
   "name": "com.thesuryash.physics-sandbox",
   "version": "1.0.0",
   "displayName": "Physics Sandbox",
-  "description": "No-code Unity environment for building physics education simulations — rigidbody mechanics, vector fields, drag, springs, FBD, import/export, and a Physics Sandbox editor dashboard.",
+  "description": "No-code Unity environment for building physics education simulations - rigidbody mechanics, vector fields, drag, springs, FBD, import/export, and a Physics Sandbox editor dashboard.",
   "unity": "2022.3",
   "keywords": [
     "physics",
@@ -16,10 +16,19 @@
   ],
   "dependencies": {
     "com.unity.textmeshpro": "3.0.7",
+    "com.unity.ugui": "1.0.0",
     "com.unity.mathematics": "1.2.6",
     "com.unity.burst": "1.8.3",
     "com.unity.collections": "1.2.4",
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.modules.physics": "1.0.0",
+    "com.unity.modules.physics2d": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0",
+    "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
+    "com.unity.modules.unitywebrequest": "1.0.0"
   },
   "samples": [
     {

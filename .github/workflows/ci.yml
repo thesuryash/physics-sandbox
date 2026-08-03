@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  compile-and-test:
+    name: Compile & test (EditMode)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout package
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # TestProject~ is a minimal throwaway Unity project (hidden from the
+      # package's own consumers by the trailing "~") whose only job is to
+      # add this package the same way an end user would — via a UPM
+      # dependency in Packages/manifest.json (see that file for the
+      # "file:../.." entry) — and let Unity compile it. If this step goes
+      # green, the package both compiles and installs cleanly.
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: TestProject~/Library
+          key: Library-TestProject-${{ hashFiles('Runtime/**', 'Editor/**', 'package.json', 'TestProject~/Packages/manifest.json') }}
+          restore-keys: |
+            Library-TestProject-
+
+      - name: Run EditMode tests
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: TestProject~
+          unityVersion: auto
+          testMode: editmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: EditMode Test Results
+          artifactsPath: TestProject~/artifacts
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editmode-test-results
+          path: TestProject~/artifacts
+          retention-days: 7
